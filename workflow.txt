@@ -1,0 +1,7 @@
+program will ask for file as input
+
+program will ask for the file type to which input should be converted to example docx pptx pdf and ppt
+
+program will ask if to keep the orignal or delete it 
+
+scope for future : universal file conversion (video audio etc) 
