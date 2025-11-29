@@ -5,7 +5,7 @@ WIP tool which helps me convert multiple pptx or odt to pdfs
 
 
 ## requirments
-[gum](https://github.com/charmbracelet/gum) from charmbracelets. (very useful documentaion)
+[gum](https://github.com/charmbracelet/gum) from charmbracelets. (very useful documentaion) and
 libreoffice
 
 
