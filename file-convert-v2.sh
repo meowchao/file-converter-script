@@ -51,22 +51,24 @@ keep_original=$(gum choose --header "Keep original files?" "Yes" "No")
 
 # Confirmation
 echo ""
-gum confirm "Proceed with conversion?" 
+gum confirm "Proceed with conversion?" || exit 1 
 
 # Processing logic
 echo ""
 gum spin --spinner dot --title "Converting files..." -- sleep 2
 
-# add your actual logic
+# your actual logic
 
 echo "$selected_files" | while IFS= read -r file; do
     if [ -n "$file" ]; then
         filename="${file%.*}"
         extension="${file##*.}"
         
+        
         echo "Converting: $file "to" ${filename}.${target_format}"
         
         #conversion logiv
+        libreoffice --headless --convert-to "$target_format" "$selected_files" --outdir converted-files
 
 
         if [ "$keep_original" = "No" ]; then
