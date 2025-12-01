@@ -1,13 +1,12 @@
 #!/bin/bash
 
-#clear the screen
-echo -e "\033[H\033[2J" 
-
+echo -e "\033[H\033[2J"
 
 gum style \
     --foreground 212 --border-foreground 212 --border double \
-     --width 100 --margin "1 2" --padding "2 4" \
+    --width 100 --margin "1 2" --padding "2 4" \
     '
+ 
 
 ███████╗██╗██╗     ███████╗                                                  
 ██╔════╝██║██║     ██╔════╝                                                  
@@ -23,62 +22,55 @@ gum style \
 ╚██████╗╚██████╔╝██║ ╚████║ ╚████╔╝ ███████╗██║  ██║   ██║   ███████╗██║  ██║
  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
 
-
- made by spikeypear
+                                                                                                          
+made by spikeypear
 '
 
+files=$(find . -maxdepth 1 -type f -printf "%f\n")
 
+echo "Select files to convert:"
+selected_files=$(echo "$files" | gum choose --no-limit)
 
+[ -z "$selected_files" ] && echo "No files selected." && exit 1
 
-files=$(ls -1p | grep -v / | grep -v '^\.')
-
-
-
-echo "Select files to convert :"
-selected_files=$(echo "$files" | gum choose --no-limit )
-
-# Show selected files
 echo ""
 echo "Selected files:"
 echo "$selected_files"
 
-# Ask for target format
 echo ""
 echo "Select target format:"
 target_format=$(gum choose "pdf" "docx" "pptx" "ppt" "txt" "html")
-echo "you choose: $target_format"
+echo "you chose: $target_format"
 
 echo ""
 keep_original=$(gum choose --header "Keep original files?" "Yes" "No")
 
-# Confirmation
 echo ""
-gum confirm "Proceed with conversion?" || exit 1 
+gum confirm "Proceed with conversion?" || exit 1
 
-# Processing logic
+mkdir -p converted-files
+
 echo ""
 gum spin --spinner dot --title "Converting files..." -- sleep 2
 
-# your actual logic
 
 echo "$selected_files" | while IFS= read -r file; do
-    if [ -n "$file" ]; then
-        filename="${file%.*}"
-        extension="${file##*.}"
-        
-        
-        echo "Converting: $file "to" ${filename}.${target_format}"
-        
-        #conversion logiv
-        libreoffice --headless --convert-to "$target_format" "$selected_files" --outdir converted-files
+    [ -z "$file" ] && continue
 
+    filename="${file%.*}"
 
+    echo "Converting: $file → ${filename}.${target_format}"
+
+    if libreoffice --headless --convert-to "$target_format" "$file" --outdir converted-files; then
         if [ "$keep_original" = "No" ]; then
             echo "  Deleting original: $file"
-            # rm "$file"
+            rm "$file"
         fi
+    else
+        echo "  ERROR converting $file"
     fi
 done
 
 echo ""
 echo "Conversion complete!"
+
